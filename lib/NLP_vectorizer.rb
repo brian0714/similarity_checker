@@ -15,14 +15,14 @@ end
 
 # TF-IDF Vectorizer
 def tfidf_vectorize(texts)
-    # 建立 TF-IDF 文件集合
+    # Create TF-IDF document-set
     corpus = TfIdfSimilarity::Corpus.new
     puts "corpus: #{corpus}"
     texts.each { |text| corpus.add_document(TfIdfSimilarity::Document.new(text)) }
     puts "corpus: #{corpus}"
     model = TfIdfSimilarity::TfIdfModel.new(corpus)
 
-    # 提取文本的向量表示
+    # Get the vectorized text
     vectors = texts.map { |text| model.document_vector(corpus.documents.find { |doc| doc.text == text }) }
     vectors
 end
@@ -31,7 +31,7 @@ end
 def tokenize(text, method=:word)
     case method
     when :word
-      tokens = text.downcase.split(/\W+/).map(&:stem) # word (per vocabulary) split並進行詞幹化 (stemming)
+      tokens = text.downcase.split(/\W+/).map(&:stem) # word (per vocabulary) split with stemming approach
     when :character
       tokens = text.chars # split per letter
     when :bigram
@@ -44,7 +44,7 @@ def tokenize(text, method=:word)
     tokens
 end
 
-# 使用 Stopwords gem 去除停用詞
+# Use Stopwords gem to remove stopwords
 def remove_stopwords(tokens)
     # stopwords_filter = Stopwords::Filter.new("en")
     # tokens.reject { |token| stopwords_filter.stopword?(token) }
@@ -53,7 +53,7 @@ def remove_stopwords(tokens)
     tokens.reject { |token| stopwords.include?(token.downcase) }
 end
 
-# Text Vectorizer 方法
+# Text Vectorizer
 def text_vectorizer(text1, text2, tokenize_method, vectorize_method)
     # Tokenize texts
     tokens1 = remove_stopwords(tokenize(text1, tokenize_method))
@@ -62,7 +62,7 @@ def text_vectorizer(text1, text2, tokenize_method, vectorize_method)
     # Merge all tokens
     all_tokens = (tokens1 + tokens2).uniq
 
-    # 使用不同的向量化方法
+    # Different vectorize methods
     vec1, vec2 = case vectorize_method
                 when :bow
                     [bow_vectorize(tokens1, all_tokens), bow_vectorize(tokens2, all_tokens)]

@@ -11,7 +11,7 @@ require_relative 'NLP_vectorizer'
 def euclidean_similarity(text1, text2, tokenize_method=:word, vectorize_method=:bow)
   vec1, vec2 = text_vectorizer(text1, text2, tokenize_method, vectorize_method)
 
-  # 檢查向量長度是否一致
+  # Check whether the length is identical
   raise "Vectors must have the same length" if vec1.length != vec2.length
 
   # Calculate Euclidean distance
@@ -69,8 +69,8 @@ def cosine_similarity(text1, text2)
   # Create vectors for the common words
   vectors = common.map { |f| [freq1[f], freq2[f]] }.transpose
 
-  vec1 = Vector.elements(vectors.first || []) # 如果沒有數據，設為空陣列
-  vec2 = Vector.elements(vectors.last || [])  # 同上
+  vec1 = Vector.elements(vectors.first || []) # Return empty array if vectors are null
+  vec2 = Vector.elements(vectors.last || [])  # Return empty array if vectors are null
 
   # Handle zero magnitude cases
   if vec1.magnitude.zero? || vec2.magnitude.zero?
@@ -152,6 +152,7 @@ def fingerprints(k_grams, w)
   window_min.uniq
 end
 
+# (k = 3 if size = 100~200 | w = k+1 or k+2)
 def winnowing(doc1, doc2, k, w)
   tokens1 = tokenize(doc1, method=:word) # winnow_tokenize(doc1)
   tokens2 = tokenize(doc2, method=:word) # winnow_tokenize(doc2)
@@ -165,72 +166,12 @@ def winnowing(doc1, doc2, k, w)
   fingerprints1 = fingerprints(k_grams1, w)
   fingerprints2 = fingerprints(k_grams2, w)
 
-  # 檢查 fingerprints 的長度，避免除以零的情況
+  # Check the value of fingerprints to avoid division-by-zero error
   return 0.0 if fingerprints1.empty? || fingerprints2.empty?
 
   matches = fingerprints1 & fingerprints2
   matches.length.to_f / [fingerprints1.length, fingerprints2.length].min
 end
-
-# def plagiarism_checker(directory, output_file)
-#   k = 3 # Size of k-grams
-#   w = 4 # Size of the window
-#   files_content = read_files(directory)
-
-#   # Open CSV file for writing
-#   CSV.open(output_file, 'w') do |csv|
-#     # Define CSV headers including execution times for each algorithm
-#     csv << ["File 1", "File 2", "Jaccard Similarity", "Jaccard Similarity Execution Time (s)", "Jaccard Similarity with Bigrams", "Jaccard with Bigrams Execution Time (s)", "Cosine Similarity", "Cosine Similarity Execution Time (s)", "Overlap Coefficient", "Overlap Coefficient Execution Time (s)", "Normalized Levenshtein Distance", "Normalized Levenshtein Distance Execution Time (s)", "Normalized Hamming Distance", "Normalized Hamming Distance Execution Time (s)", "Winnowing", "Winnowing Execution Time (s)"]
-
-#     files_content.keys.combination(2).each do |file1, file2|
-#       text1 = files_content[file1]
-#       text2 = files_content[file2]
-#       start_time = Time.now
-#       jaccard = jaccard_similarity(text1, text2)
-#       jaccard_time = Time.now - start_time
-
-#       start_time = Time.now
-#       jaccard_with_bigrams = jaccard_similarity_with_bigrams(text1, text2)
-#       jaccard_with_bigrams_time = Time.now - start_time
-
-#       start_time = Time.now
-#       cosine = cosine_similarity(text1, text2)
-#       cosine_time = Time.now - start_time
-
-#       start_time = Time.now
-#       overlap = overlap_coefficient(text1, text2)
-#       overlap_time = Time.now - start_time
-
-#       start_time = Time.now
-#       levenshtein = 1 - normalized_levenshtein_distance(text1, text2)
-#       levenshtein_time = Time.now - start_time
-
-#       hamming_time = 0
-#       hamming = "N/A"
-#       if text1.length == text2.length
-#         start_time = Time.now
-#         hamming = 1 - normalized_hamming_distance(text1, text2)
-#         hamming_time = Time.now - start_time
-#       end
-
-#       start_time = Time.now
-#       winnowing = winnowing(text1, text2, k, w)
-#       winnowing_time = Time.now - start_time
-
-#       # Write to CSV
-#       csv << [
-#         File.basename(file1), File.basename(file2),
-#         jaccard.round(2), jaccard_time.round(4),
-#         jaccard_with_bigrams.round(2), jaccard_with_bigrams_time.round(4),
-#         cosine.round(2), cosine_time.round(4),
-#         overlap.round(2), overlap_time.round(4),
-#         levenshtein.round(2), levenshtein_time.round(4),
-#         hamming, hamming_time.round(4),
-#         winnowing.round(2), winnowing_time.round(4)
-#       ]
-#     end
-#   end
-# end
 
 # Usage
 
@@ -246,12 +187,12 @@ text2 = "I love to read."
 # text1 = "The research is about similarity calculation."
 # text2 = "Multiple methods are based on NLP."
 
-puts "jaccard_similarity: #{jaccard_similarity(text1, text2)}"
-puts "jaccard_similarity_with_bigrams: #{jaccard_similarity(text1, text2, ngram=2)}"
+# puts "jaccard_similarity: #{jaccard_similarity(text1, text2)}"
+# puts "jaccard_similarity_with_bigrams: #{jaccard_similarity(text1, text2, ngram=2)}"
 
-puts "cosine_similarity: #{cosine_similarity(text1, text2)}"
-puts "overlap_similarity: #{overlap_coefficient(text1, text2)}"
-puts "levenshtein_similarity: #{1 - normalized_levenshtein_distance(text1, text2)}"
-puts "winnowing_similarity: #{winnowing(text1, text2, k=3, w=4)}"
+# puts "cosine_similarity: #{cosine_similarity(text1, text2)}"
+# puts "overlap_similarity: #{overlap_coefficient(text1, text2)}"
+# puts "levenshtein_similarity: #{1 - normalized_levenshtein_distance(text1, text2)}"
+# puts "winnowing_similarity: #{winnowing(text1, text2, k=3, w=4)}"
 
-puts "euclidean_similarity: #{euclidean_similarity(text1, text2, tokenize_method=:word, vectorize_method=:bow)}"
+# puts "euclidean_similarity: #{euclidean_similarity(text1, text2, tokenize_method=:word, vectorize_method=:bow)}"

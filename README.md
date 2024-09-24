@@ -1,5 +1,5 @@
-# similarity_checker
-To compare the similarity between text and code.
+# Similarity Checker
+To compare the similarity between texts or codes.
 
 ## Reference
 https://github.com/diasks2/ruby-nlp?tab=readme-ov-file#text-similarity

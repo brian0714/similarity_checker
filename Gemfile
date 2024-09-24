@@ -20,7 +20,10 @@ gem 'write_xlsx'
 
 gem 'diffy'
 
+gem 'daru'
+
 gem 'stemmer'
 
+gem 'stopwords'
 gem 'stopwords-filter', '~> 0.7.0'
 gem 'tf-idf-similarity'
